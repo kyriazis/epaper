@@ -10,9 +10,15 @@ DIR_EPD = ./lib/e-Paper
 DIR_FONTS = ./lib/Fonts
 DIR_GUI = ./lib/GUI
 
+EPDTEST_SRCDIR = ./src
+EPDTEST_BINDIR = ./bin
+EPDTEST_NAME = epdtest
+EPDTEST = $(EPDTEST_BINDIR)/$(EPDTEST_NAME)
+
 VPATH = $(DIR_CONF):$(DIR_EPD):$(DIR_GUI)
 
-INCS = -I $(DIR_CONF)
+LIBINCS = -I $(DIR_CONF)
+INCS = -I ./lib
 
 DEV_SRC = \
 	$(DIR_CONF)/dev_hardware_SPI.c \
@@ -32,7 +38,13 @@ GUI_SRC = \
 SRC = $(DEV_SRC) $(EPD_SRC) $(GUI_SRC)
 OBJ = $(patsubst %, $(EPD_LIB_BIN)/%, $(notdir $(patsubst %.c, %.o, $(SRC))))
 
-all: lib
+ifeq ($(DEBUG),1)
+CFLAGS += -D DEBUG -g
+endif
+
+CFLAGS += -D USE_LGPIO_LIB -D RPI
+
+all: lib test
 
 lib: $(EPD_LIB)
 
@@ -42,8 +54,16 @@ $(EPD_LIB_BIN):
 	mkdir -p $(EPD_LIB_BIN)
 
 $(EPD_LIB_BIN)/%.o: %.c
-	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@ $(INCS)
+	$(CC) $(CFLAGS) -c $< -o $@ $(LIBINCS)
 	$(AR) rvU $(EPD_LIB) $@
 
+test: $(EPDTEST_BINDIR) $(EPDTEST)
+
+$(EPDTEST_BINDIR):
+	mkdir -p $(EPDTEST_BINDIR)
+
+$(EPDTEST): $(EPDTEST_SRCDIR)/$(EPDTEST_NAME).c
+	$(CC) $(CFLAGS) -o $@ $< $(INCS) -L $(EPD_LIB_BIN) -lEPD -llgpio
+
 clean:
-	rm -rf $(EPD_LIB_BIN)
+	rm -rf $(EPD_LIB_BIN) $(EPDTEST_BINDIR)
