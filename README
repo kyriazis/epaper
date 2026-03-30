@@ -1,0 +1,10 @@
+
+A project to work with a 2.7 in epaper display from waveshare using
+an OrangePi RV2 (riscv).
+
+Files under lib are (initially) copied from the waveshare repo.
+
+Makefile is simple; trimmed down from waveshare's repo to fit our needs.
+No rocket science here.
+
+
