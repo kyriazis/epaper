@@ -15,7 +15,7 @@ EPDTEST_BINDIR = ./bin
 EPDTEST_NAME = epdtest
 EPDTEST = $(EPDTEST_BINDIR)/$(EPDTEST_NAME)
 
-VPATH = $(DIR_CONF):$(DIR_EPD):$(DIR_GUI)
+VPATH = $(DIR_CONF):$(DIR_EPD):$(DIR_GUI):$(DIR_FONTS)
 
 LIBINCS = -I $(DIR_CONF)
 INCS = -I ./lib
@@ -35,7 +35,17 @@ GUI_SRC = \
 	$(DIR_GUI)/GUI_BMPfile.c \
 	$(NULL)
 
-SRC = $(DEV_SRC) $(EPD_SRC) $(GUI_SRC)
+FONTS_SRC = \
+	$(DIR_FONTS)/font12.c \
+	$(DIR_FONTS)/font12CN.c \
+	$(DIR_FONTS)/font16.c \
+	$(DIR_FONTS)/font20.c \
+	$(DIR_FONTS)/font24.c \
+	$(DIR_FONTS)/font24CN.c \
+	$(DIR_FONTS)/font8.c \
+	$(NULL)
+
+SRC = $(DEV_SRC) $(EPD_SRC) $(GUI_SRC) $(FONTS_SRC)
 OBJ = $(patsubst %, $(EPD_LIB_BIN)/%, $(notdir $(patsubst %.c, %.o, $(SRC))))
 
 ifeq ($(DEBUG),1)
